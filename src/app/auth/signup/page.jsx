@@ -1,18 +1,28 @@
 'use client'
+import { authClient } from "@/lib/auth-client";
 import { Check } from "@gravity-ui/icons";
-import { Button, Description, FieldError, Form, Input, Label, TextField } from "@heroui/react";
+import { Button, Description, FieldError, Form, Input, Label, TextField, toast,Toast } from "@heroui/react";
 
 
 const SignUpPage = () => {
 
-    const onSubmit = (e) => {
-
-
+    const onSubmit = async (e) => {
         e.preventDefault();
-        const formData= new FormData(e.currentTarget);
-        const data=Object.fromEntries(formData.entries());
-        console.log(data);
-        
+        const formData = new FormData(e.currentTarget);
+        const userData = Object.fromEntries(formData.entries());
+        const { data, error } = await authClient.signUp.email({
+            name: userData.name,
+            email: userData.email,
+            password: userData.password,
+            callbackURL:'/'
+        })
+        console.log('signUp response', data, error);
+        if(data){
+            toast.success('account is created successfully')
+        }
+        if(error){
+            toast.danger(error.message)
+        }
 
     };
     return (
